@@ -1,0 +1,82 @@
+appcfg.py -v update d:\gapps\\dbsync-sm
+
+1 .
+####################
+disetiap database ada table datasync :
+
+CREATE TABLE "DATASYNC"
+(
+  "DATASYNC_ID"	"PRIMARY_KEY" NOT NULL,
+  "NAMATABLE"	VARCHAR(100) CHARACTER SET WIN1251,
+  "TEMPLATESQL"	VARCHAR(1000) CHARACTER SET WIN1251,
+  "GAESCRIPT"	VARCHAR(100) CHARACTER SET WIN1251,
+  "LAST_CHANGE"	TIMESTAMP,
+CONSTRAINT "PK_DATASYNC" PRIMARY KEY ("DATASYNC_ID")
+);
+
+2.
+#################################
+tiap table yang disync dipasangi :
+add column :
+
+last_change timestamp,
+
+add trigger
+CREATE OR ALTER TRIGGER "PRODUK_BIU0" FOR "PRODUK"
+ACTIVE BEFORE INSERT OR UPDATE POSITION 0
+AS
+BEGIN
+new.last_change = current_timestamp;
+END
+
+3.
+############################################
+daftarkan table yang sudah siap ke datasync
+
+isi id (unique)
+
+isi nama table
+
+isi templatesql dengan
+query untuk select
+formatnya
+select namakolom1 as z, namakolom2 as y, namakolom3 as x from table
+
+isi replacesql dengan
+query untuk replace data di cloud
+format :
+replace into table(namakolom1,namakolom2,namakolom3 ) values
+
+4.
+############################################
+
+semua database yang siap di sync didaftarkan di
+c:\mis\sync.ini
+pada sections [GENERAL]
+
+contoh :
+
+[GENERAL]
+1=192.168.8.17:f:/mis/db_work/ariska/outsourcing.fdb
+2=192.168.8.17:f:/mis/db_work/ariska/nipon.fdb
+3=192.168.8.17:f:/mis/db_work/ariska/skyway.fdb
+
+5.
+################################################
+data dikirim dengan format json
+
+6.
+#############################################
+penerima di GAE
+
+=>menerima json dan diparsing sebagai array
+
+autocommit dimatikan
+transakasi sampai semua block script mengeluarkan status ok baru di commit
+
+jika ada status die mysql karena error maka desktop syng tidak akan mengupdate last_change di datasync
+
+
+note :
+=> desktop program : syncup.exe  =>
+=> GAE service : sementara masih di fortested.tes-sm.appspot.com =>

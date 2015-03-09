@@ -1,0 +1,18 @@
+application: dbsync-sm
+version: test
+runtime: php
+api_version: 1
+threadsafe: true
+
+handlers:
+- url: /listdatasync.do
+  script: listdatasync.php
+
+- url: /bawahkeataskebawah.do
+  script: bawahkeataskebawah.php
+
+- url: /setstamp.do
+  script: setstamp.php
+
+- url: /
+  script: index.php
